@@ -1,0 +1,24 @@
+﻿@page "/listalibros/editarlibro/{idLibro:int}"
+
+<FormLibro NroEmpleado="@idLibro"/>
+
+@code {
+
+    [Parameter]
+
+    public int idLibro { get; set; } 
+    // public int id { get; set; }
+    // public LibroFormCLS oLibroFormCLS { get; set; } = new LibroFormCLS();
+
+    // private void GuardarCambios()
+    // {
+        
+    // }
+
+    // private void regresar()
+    // {
+    //     Navigation.NavigateTo("/listalibros");
+
+    [Inject]
+    public NavigationManager Navigation { get; set; } = default!;
+}

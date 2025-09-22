@@ -1,0 +1,15 @@
+﻿@page "/sucursales"
+@inject NavigationManager navigationManager
+@inject ClienteService clienteService
+
+<h3>Listado de Sucursales</h3>
+<button @onclick="navegar" class="btn btn-primary">Ver Sucursales</button>
+
+@code {
+    private void navegar()
+    {
+        navigationManager.NavigateTo("/listasucursales");
+    }
+}
+
+

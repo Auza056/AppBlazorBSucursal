@@ -1,0 +1,162 @@
+﻿@page "/listasucursales"
+@inject NavigationManager navigationManager
+@inject LibroService libroService
+@inject ClienteService clienteService
+@inject SucursalService sucursalService
+
+<h3>Lista de Sucursales</h3>
+
+
+
+<div class="input-group mt-3 mb-3">
+
+    <input type="text" class="form-control" placeholder="Ingrese Ciudad"
+           @bind-value="ciudad" @bind-value:event="oninput" />
+
+    <input type="text" class="form-control" placeholder="Ingrese Director"
+           @bind-value="director" @bind-value:event="oninput" />
+
+
+    <button @onclick="buscar" class="btn btn-outline-dark" type="button">Buscar</button>
+    <button @onclick="limpiar" class="btn btn-outline-danger" type="button">Limpiar</button>
+</div>
+
+@if (listasucursales != null && listasucursales.Count != 0)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Codigo Sucursal</th>
+                <th>Ciudad</th>
+                <th>Region </th>
+                <th>Director</th>
+                <th>Objetivo de Ventas</th>
+                <th>Ventas Reales</th>
+
+                <th>Operaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var sucursal in listasucursales)
+            {
+                <tr>
+                    <td>@sucursal.CodigoSucursal</td>
+                    <td>@sucursal.Ciudad</td>
+                    <td>@sucursal.Region</td>
+
+                    <td>@sucursal.nombreDirector</td>
+                    <td>@sucursal.ObjetivoVenta</td>
+
+                    <td>@sucursal.VentasReales</td>
+
+                    <td>
+                        <button class="btn btn-primary btn-sm" @onclick="() => EditarCliente(sucursal.CodigoSucursal)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen-fill" viewBox="0 0 16 16">
+                                <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001" />
+                            </svg>
+                        </button>
+                        <button class="btn btn-danger btn-sm" @onclick="() => EliminarCliente(sucursal.CodigoSucursal)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<div class="mt-3">
+    <button class="btn btn-success" @onclick="IrARegistrar">
+        Registrar nueva Sucursal
+    </button>
+</div>
+
+
+@code {
+
+
+
+    public List<SucursalListCLS> listasucursales { get; set; } = new List<SucursalListCLS>();
+
+    public string ciudad { get; set; } = string.Empty;
+    public string director { get; set; } = string.Empty;
+
+
+
+    private void buscar()
+    {
+        listasucursales = sucursalService.filtrarSucursales(ciudad, director);
+    }
+    private void limpiar()
+    {
+
+        ciudad = "";
+        director = "";
+        listasucursales = sucursalService.filtrarSucursales(ciudad, director);
+    }
+
+
+    // public class LibroFormCLS
+    // {
+    //     public int idLibro { get; set; }
+    //     public string titulo { get; set; } = string.Empty;
+    //     public string resumen { get; set; } = string.Empty;
+    // }
+
+
+
+
+
+    protected override Task OnInitializedAsync()
+    {
+        sucursalService.OnSearch += filtrar;
+        listasucursales = sucursalService.listarsucursales();
+        // listaLibros.Add(new LibroListCLS { idLibro = 1, titulo = "Cien años de soledad" });
+        // listaLibros.Add(new LibroListCLS { idLibro = 2, titulo = "Don Quijote de la Mancha" });
+        return base.OnInitializedAsync();
+    }
+
+    private Task filtrar(string ciudad, string director)
+    {
+        listasucursales = sucursalService.filtrarSucursales(ciudad, director);
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    // {
+
+    //     new LibroFormCLS { idLibro = 1, titulo = "Cien años de soledad", resumen = "Obra de Gabriel García Márquez" },
+
+    //     new LibroFormCLS { idLibro = 2, titulo = "Don Quijote de la Mancha", resumen = "Obra de Miguel de Cervantes" },
+
+    //     new LibroFormCLS { idLibro = 3, titulo = "El señor de los anillos", resumen = "Obra de J. R. R. Tolkien" }
+
+    // };
+
+
+
+    private void EditarCliente(int idSucursal)
+
+    {
+        Navigation.NavigateTo($"/listasucursales/editarsucursal/{idSucursal}");
+    }
+
+    private void EliminarCliente(int id)
+    {
+
+        sucursalService.eliminarSucursal(id);
+
+        listasucursales = sucursalService.listarsucursales();
+        // listaLibros.RemoveAll(l => l.idLibro == id);
+        // Console.WriteLine($"El libro:  {titulo} fue eliminado.");
+    }
+
+    private void IrARegistrar()
+    {
+        Navigation.NavigateTo("/registrarsucursal");
+    }
+
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
+}

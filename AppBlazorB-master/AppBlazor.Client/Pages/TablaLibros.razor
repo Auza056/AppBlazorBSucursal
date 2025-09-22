@@ -1,0 +1,10 @@
+﻿@page "/libros"
+@inject NavigationManager navigationManager
+<h3>Listado de Libros</h3>
+<button @onclick="navegar" class="btn btn-primary">Ver Libros</button>
+@code {
+    private void navegar()
+    {
+        navigationManager.NavigateTo("/listalibros");
+    }
+}

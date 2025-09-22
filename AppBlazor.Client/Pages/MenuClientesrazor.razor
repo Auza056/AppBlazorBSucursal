@@ -1,0 +1,15 @@
+﻿@page "/clientes"
+@inject NavigationManager navigationManager
+@inject ClienteService clienteService
+
+<h3>Listado de Clientes</h3>
+<button @onclick="navegar" class="btn btn-primary">Ver Clientes</button>
+
+@code {
+    private void navegar()
+    {
+        navigationManager.NavigateTo("/listaclientes");
+    }
+}
+
+

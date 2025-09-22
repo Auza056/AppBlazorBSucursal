@@ -1,0 +1,68 @@
+﻿@page "/listalibros"
+
+<h3>Lista de Libros</h3>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Título</th>
+            <th>Operaciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var libro in listaLibros)
+        {
+            <tr>
+                <td>@libro.idLibro</td>
+                <td>@libro.titulo</td>
+                <td>
+                    <button class="btn btn-primary btn-sm" @onclick="() => EditarLibro(libro.idLibro)">Editar</button>
+                    <button class="btn btn-danger btn-sm" @onclick="() => EliminarLibro(libro.idLibro)">Eliminar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="mt-3">
+    <button class="btn btn-success" @onclick="IrARegistrar">
+        Registrar nuevo libro
+    </button>
+</div>
+
+@code {
+    public class LibroFormCLS
+    {
+        public int idLibro { get; set; }
+        public string titulo { get; set; } = string.Empty;
+        public string resumen { get; set; } = string.Empty;
+    }
+
+  
+    private List<LibroFormCLS> listaLibros = new()
+    {
+        new LibroFormCLS { idLibro = 1, titulo = "Cien años de soledad", resumen = "Obra de Gabriel García Márquez" },
+        new LibroFormCLS { idLibro = 2, titulo = "Don Quijote de la Mancha", resumen = "Obra de Miguel de Cervantes" },
+        new LibroFormCLS { idLibro = 3, titulo = "El señor de los anillos", resumen = "Obra de J. R. R. Tolkien" }
+    };
+
+    private void EditarLibro(int id)
+    {
+        Navigation.NavigateTo($"/editar/{id}");
+    }
+
+    private void EliminarLibro(int id)
+    {
+        listaLibros.RemoveAll(l => l.idLibro == id);
+       // Console.WriteLine($"El libro:  {titulo} fue eliminado.");
+    }
+
+    private void IrARegistrar()
+    {
+        Navigation.NavigateTo("/registrarlibro");
+    }
+
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
+}

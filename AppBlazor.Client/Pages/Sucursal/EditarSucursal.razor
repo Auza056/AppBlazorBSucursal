@@ -1,0 +1,24 @@
+﻿@page "/listasucursales/editarsucursal/{idSucursal:int}"
+
+<FormSucursal CodigoSucursal="@idSucursal" />
+
+@code {
+
+    [Parameter]
+
+    public int idSucursal { get; set; }
+    // public int id { get; set; }
+    // public LibroFormCLS oLibroFormCLS { get; set; } = new LibroFormCLS();
+
+    // private void GuardarCambios()
+    // {
+        
+    // }
+
+    // private void regresar()
+    // {
+    //     Navigation.NavigateTo("/listalibros");
+
+    [Inject]
+    public NavigationManager Navigation { get; set; } = default!;
+}

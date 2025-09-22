@@ -1,0 +1,35 @@
+﻿@inject LibroService libroService
+@inject SucursalService sucursalService
+
+
+
+<div class="input-group mt-3 mb-3">
+
+    <input type="text" class="form-control" placeholder="Ingrese Ciudad"
+           @bind-value="ciudad" @bind-value:event="oninput" />
+
+    <input type="text" class="form-control" placeholder="Ingrese Director"
+           @bind-value="director" @bind-value:event="oninput" />
+
+         
+    <button @onclick="buscar" class="btn btn-outline-dark" type="button">Buscar</button>
+    <button @onclick="limpiar" class="btn btn-outline-danger" type="button">Limpiar</button>
+</div>
+
+@code {
+    public string ciudad { get; set; } = string.Empty;
+    public string director { get; set; } = string.Empty;
+
+
+    private async Task buscar()
+    {
+        await sucursalService.notificarBusqueda(ciudad,director);
+    }
+    private async Task limpiar()
+    {
+        director = string.Empty;
+
+        ciudad = string.Empty;
+        await sucursalService.notificarBusqueda(ciudad,director);
+    }
+}

@@ -1,0 +1,132 @@
+﻿@inject NavigationManager navigationManager
+@inject LibroService libroService
+@inject TipoLibroService tipolibroService
+@inject JefeService jefeService
+<h2>@titulo</h2>
+
+<EditForm Model="@oLibroFormCLS" OnValidSubmit="@GuardarCambios">
+    <DataAnnotationsValidator />
+    <div class="mt-3">
+        <label>Nro Empleado</label>
+        <InputNumber readonly class="form-control" @bind-Value="oLibroFormCLS.NroEmpleado" disabled="@(NroEmpleado != 0)" />
+        <ValidationMessage For="(() => oLibroFormCLS.NroEmpleado)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Nombre</label>
+        <InputText class="form-control" @bind-Value="oLibroFormCLS.Nombre" />
+        <ValidationMessage For="(() => oLibroFormCLS.Nombre)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Edad</label>
+        <InputNumber class="form-control" @bind-Value="oLibroFormCLS.Edad" />
+        <ValidationMessage For="(() => oLibroFormCLS.Edad)" />
+    </div>
+
+<div class="mt-3">
+    <label>Cargo</label>
+    <InputSelect class="form-control" @bind-Value="oLibroFormCLS.Cargo">
+        <option value="">-- Seleccione un cargo --</option>
+            <option value="Director">Director</option>
+        <option value="Representante">Representante</option>
+        <option value="Supervisor">Supervisor</option>
+        <option value="Gerente">Gerente</option>
+    </InputSelect>
+</div>
+    <div class="mt-3">
+        <label>Fecha de Contrato</label>
+        <InputDate class="form-control" @bind-Value="oLibroFormCLS.FechaContrato" />
+        <ValidationMessage For="(() => oLibroFormCLS.FechaContrato)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Seleccione Sucursal</label>
+        <InputSelect class="form-control" @bind-Value="oLibroFormCLS.idSucursal">
+            <option value="0">--Seleccione--</option>
+            @foreach (var item in listatipo)
+            {
+                <option value="@item.idSucursal">@item.nombreSucursal</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="(() => oLibroFormCLS.idSucursal)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Seleccione Jefe a Cargo</label>
+        <InputSelect class="form-control" @bind-Value="oLibroFormCLS.idJefe">
+            <option value="0">--Seleccione--</option>
+            @foreach (var item in listajefes)
+            {
+                <option value="@item.idJefe">@item.nombreJefe</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="(() => oLibroFormCLS.idJefe)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Ventas</label>
+        <InputNumber class="form-control" @bind-Value="oLibroFormCLS.Ventas" />
+        <ValidationMessage For="(() => oLibroFormCLS.Ventas)" />
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <button type="button" class="btn btn-danger" @onclick="regresar">Regresar</button>
+    </div>
+</EditForm>
+@code{
+
+
+
+
+
+
+
+    public LibroFormCLS oLibroFormCLS { get; set; } = new LibroFormCLS();
+    [Parameter]
+    public int NroEmpleado { get; set; }
+
+
+    public string titulo { get; set; } = "";
+
+    public List<TipoLibroCLS> listatipo { get; set; } = new List<TipoLibroCLS>();
+    public List<JefeCLS> listajefes { get; set; } = new List<JefeCLS>();
+
+
+    protected override Task OnInitializedAsync(){
+
+        listatipo = tipolibroService.listarTipoLibros();
+
+        listajefes = jefeService.listarTipoLibros();
+
+        if (NroEmpleado == 0) titulo = "Agregar Representante Ventas";
+        else
+        {
+            titulo = "Editar Representante Ventas";
+            oLibroFormCLS = libroService.recuperarLibroPorId(NroEmpleado);
+        }
+        return base.OnInitializedAsync();
+    }
+    private void GuardarCambios()
+    {
+        if(titulo=="Agregar Representante Ventas"){
+            libroService.guardarLibro(oLibroFormCLS);
+            navigationManager.NavigateTo("/listalibros");
+        }
+         else
+    {
+        // Editar libro existente
+        libroService.guardarLibro(oLibroFormCLS); // actualizar libro
+        Console.WriteLine($"Representante '{oLibroFormCLS.Nombre}' editado correctamente."); // mensaje en consola
+        navigationManager.NavigateTo("/listalibros"); // vuelve a lista
+    }
+    }
+
+    private void regresar()
+    {
+        Navigation.NavigateTo("/listalibros");
+    }
+    [Inject]
+    public NavigationManager Navigation { get; set; } = default!;
+}

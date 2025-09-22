@@ -1,0 +1,17 @@
+﻿@page "/registrarsucursal"
+
+<FormSucursal CodigoSucursal=0></FormSucursal>
+
+
+@code {
+    public SucursalFormCLS osucursalForm { get; set; } = new SucursalFormCLS();
+    private void guardar()
+    {
+        Console.WriteLine("Guardando...");
+    }
+    private void regresar(){
+        Navigation.NavigateTo("/listasucursales");
+    }
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
+}

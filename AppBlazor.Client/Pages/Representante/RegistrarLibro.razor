@@ -1,0 +1,17 @@
+﻿@page "/registrarlibro"
+
+<FormLibro NroEmpleado=0></FormLibro>
+
+
+@code {
+    public LibroFormCLS oLibroFormCLS { get; set; } = new LibroFormCLS();
+    private void guardar()
+    {
+        Console.WriteLine("Guardando...");
+    }
+    private void regresar(){
+        Navigation.NavigateTo("/listalibros");
+    }
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
+}

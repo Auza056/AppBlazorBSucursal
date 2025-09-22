@@ -1,0 +1,11 @@
+﻿@page "/libros"
+@inject NavigationManager navigationManager
+@inject LibroService libroService
+<h3>Listado de Representantes Venta</h3>
+<button @onclick="navegar" class="btn btn-primary">Ver Representantes</button>
+@code {
+    private void navegar()
+    {
+        navigationManager.NavigateTo("/listalibros");
+    }
+}

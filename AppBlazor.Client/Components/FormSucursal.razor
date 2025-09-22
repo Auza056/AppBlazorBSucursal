@@ -1,0 +1,115 @@
+﻿@inject NavigationManager navigationManager2
+@inject LibroService libroService
+@inject TipoLibroService tipolibroService
+@inject JefeService jefeService
+@inject ClienteService clienteService
+@inject SucursalService sucursalService
+
+<h2>@titulo</h2>
+
+<EditForm Model="@osucursalForm" OnValidSubmit="@GuardarCambios">
+    <DataAnnotationsValidator />
+    <div class="mt-3">
+        <label>Codigo Sucursal</label>
+        <InputNumber readonly class="form-control" @bind-Value="osucursalForm.CodigoSucursal" disabled="@(CodigoSucursal != 0)" />
+        <ValidationMessage For="(() => osucursalForm.CodigoSucursal)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Ciudad</label>
+        <InputText class="form-control" @bind-Value="osucursalForm.Ciudad" />
+        <ValidationMessage For="(() => osucursalForm.Ciudad)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Region</label>
+        <InputText class="form-control" @bind-Value="osucursalForm.Region" />
+        <ValidationMessage For="(() => osucursalForm.Region)" />
+    </div>
+
+    <div class="mt-3">
+        <label>Seleccione Director</label>
+        <InputSelect class="form-control" @bind-Value="osucursalForm.idDirector">
+            <option value="0">--Seleccione--</option>
+            @foreach (var item in listarepresentantes)
+            {
+                <option value="@item.NroEmpleado">@item.Nombre</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="(() => osucursalForm.idDirector)" />
+    </div>
+
+
+    <div class="mt-3">
+        <label>Objetivo Venta</label>
+        <InputNumber class="form-control" @bind-Value="osucursalForm.ObjetivoVenta" />
+        <ValidationMessage For="(() => osucursalForm.ObjetivoVenta)" />
+    </div>
+    <div class="mt-3">
+        <label>Ventas Reales</label>
+        <InputNumber class="form-control" @bind-Value="osucursalForm.VentasReales" />
+        <ValidationMessage For="(() => osucursalForm.VentasReales)" />
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <button type="button" class="btn btn-danger" @onclick="regresar">Regresar</button>
+    </div>
+</EditForm>
+
+
+@code {
+
+
+
+    public SucursalFormCLS osucursalForm { get; set; } = new SucursalFormCLS();
+    [Parameter]
+    public int CodigoSucursal { get; set; }
+
+
+    public string titulo { get; set; } = "";
+
+    public List<LibroListCLS> listarepresentantes { get; set; } = new List<LibroListCLS>();
+
+
+    protected override Task OnInitializedAsync()
+    {
+        var todosRepresentantes = libroService.listarlibros();
+
+        // Filtras solo los que tienen Cargo == "Director"
+        listarepresentantes = todosRepresentantes
+            .Where(r => r.Cargo != null && r.Cargo.Equals("Director", StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+
+        if (CodigoSucursal == 0) titulo = "Agregar Sucursal";
+        else
+        {
+            titulo = "Editar Sucursal";
+            osucursalForm = sucursalService.recuperarSucursalPorId(CodigoSucursal);
+        }
+        return base.OnInitializedAsync();
+    }
+    private void GuardarCambios()
+    {
+        if (titulo == "Agregar Sucursal")
+        {
+            sucursalService.guardarSucursal(osucursalForm);
+            navigationManager2.NavigateTo("/listasucursales");
+        }
+        else
+        {
+            // Editar libro existente
+            sucursalService.guardarSucursal(osucursalForm); // actualizar libro
+            Console.WriteLine($"Sucursal '{osucursalForm.Ciudad}' editado correctamente."); // mensaje en consola
+            navigationManager2.NavigateTo("/listasucursales"); // vuelve a lista
+        }
+    }
+
+    private void regresar()
+    {
+        Navigation.NavigateTo("/listasucursales");
+    }
+    [Inject]
+    public NavigationManager Navigation { get; set; } = default!;
+}
